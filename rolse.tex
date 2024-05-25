@@ -1,0 +1,37 @@
+1: npm init
+2: npm install express --save
+3: npm install mongoose --save
+4: npm install typescript --save-dev
+5: npm i cors
+6: npm i dotenv
+7: tsc -init
+8: go to tsconfig.json file. and change "rootDir": "./src", and "outDir": "./dist", file.
+
+9: copy express code and past app.ts file.
+
+10: write --> "build": "tsc", this command under scripts on package.json file. er fole ts to js e convert korte command e tsc lekte hobe nah, 'npm run build' lekle e hobe.
+11: npm run build
+
+12: node dist/app.js [server run hobe]
+
+13: add 1st 2 line on tsconfig.json file from logRocket(typescript-eslint-prettier [https://blog.logrocket.com/linting-typescript-eslint-prettier/])
+
+14: npm install eslint @typescript-eslint/parser @typescript-eslint/eslint-plugin --save-dev
+
+15:old:npx eslint@6 --init  update: npx eslint --init  (module e .eslintrc.json file create hoise. but eslint update korar karone ekn eslint.config.mjs file create hoi). importent-file: [https://github.com/ShafiaChy/Eslint-Config-Setup] eita follow korbo.
+
+15.2: npm i typescript-eslint [if update vertion install]
+
+16: npm install --save-dev eslint-config-prettier [eslint r prettier e konu plm hoe eita handel korbe]
+
+
+17: npm i ts-node-dev --save-dev [auto server run]
+17.2: ts-node-dev --respawn --transpile-only src/server.
+ts [package e add kore dese(npm run start:dev)]
+
+
+18: data validation library
+
+18.1: npm validation
+18.2: npm joi
+18.3: zod.dev
