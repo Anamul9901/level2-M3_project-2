@@ -1,22 +1,31 @@
-import cors from 'cors'
-import express, { Application, Request, Response } from 'express'
-import { StudentRoutes } from './app/modules/student/student.route'
-const app: Application = express()
+import cors from 'cors';
+import express, { Application, Request, Response } from 'express';
+import { StudentRoutes } from './app/modules/student/student.route';
+import { UserRoutes } from './app/modules/user/user.route';
+import globalErrorHandler from './app/middlwares/globalErrorHandler';
+import notFound from './app/middlwares/notFound';
+import router from './app/routes';
+const app: Application = express();
 
 //parsers
-app.use(express.json())
-app.use(cors())
+app.use(express.json());
+app.use(cors());
 
 //application routers
-app.use('/api/v1/students', StudentRoutes)
+// router.use('/api/v1/users', UserRoutes)
+// router.use('/api/v1/students', StudentRoutes);
+app.use('/api/v1', router);
 
-const getAController = (req: Request, res: Response) => {
-  const a = 10
-  res.send(a)
-}
+const test = (req: Request, res: Response) => {
+  const a = 10;
+  res.send(a);
+};
 
-app.get('/', getAController)
+app.get('/', test);
 
-// console.log(process.cwd());
+app.use(globalErrorHandler);
 
-export default app
+//not Found
+app.use(notFound);
+
+export default app;

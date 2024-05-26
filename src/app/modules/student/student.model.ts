@@ -6,7 +6,7 @@ import {
   // StudentMethods,
   StudentModel,
   TUserName,
-} from './student/student.interface';
+} from './student.interface';
 // import validator from 'validator'
 
 const userNameSchema = new Schema<TUserName>({
@@ -83,6 +83,12 @@ const localGuardianSchema = new Schema<TLocalGuardian>({
 
 const studentSchema = new Schema<TStudent, StudentModel>({
   id: { type: String, required: [true, 'ID is required'], unique: true },
+  user: {
+    type: Schema.Types.ObjectId,
+    required: [true, 'User id is required'],
+    unique: true,
+    ref: 'User',
+  },
   name: {
     type: userNameSchema,
     required: [true, 'Name is required'],
@@ -138,16 +144,6 @@ const studentSchema = new Schema<TStudent, StudentModel>({
   },
   profileImg: {
     type: String,
-  },
-  isActive: {
-    type: String,
-    enum: {
-      values: ['active', 'blocked'],
-      message:
-        "{VALUE} is not valid. Status must be either 'active' or 'blocked'",
-    },
-    default: 'active',
-    required: [true, 'Status is required'],
   },
 });
 
