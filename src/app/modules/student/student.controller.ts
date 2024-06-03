@@ -1,60 +1,30 @@
-import { NextFunction, Request, Response } from 'express';
 import { StudentServices } from './student.service';
 import sendResponse from '../../utils/sendResponse';
 import httpStatus from 'http-status';
-// import studentVAlidationSchema from './student.validation';
+import catchAsync from '../../utils/catchAsync';
 
-// createStudents akn user theke hobe
+const getAllStudents = catchAsync(async (req, res) => {
+  const result = await StudentServices.getAllStudentsFromDB();
 
-const getAllStudents = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    const result = await StudentServices.getAllStudentsFromDB();
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Students are retrived succesfully',
+    data: result,
+  });
+});
 
-    // res.status(200).json({
-    //   success: true,
-    //   message: 'Students are retrived successfully',
-    //   data: result,
-    // });
-    sendResponse(res, {
-      statusCode: httpStatus.OK,
-      success: true,
-      message: 'Students are retrived succesfully',
-      data: result,
-    });
-  } catch (error: any) {
-    // res.status(500).json({
-    //   success: false,
-    //   message: error.message || 'something went wrong',
-    //   error: error,
-    // });
-    next(error);
-  }
-};
+const getSingleStudent = catchAsync(async (req, res) => {
+  const { studentId } = req.params;
+  const result = await StudentServices.getSingleStudentFromDB(studentId);
 
-const getSingleStudent = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
-  try {
-    // const studentId = req.params.studentId
-    const { studentId } = req.params;
-    const result = await StudentServices.getSingleStudentFromDB(studentId);
-
-    sendResponse(res, {
-      statusCode: httpStatus.OK,
-      success: true,
-      message: 'Students is retrived succesfully',
-      data: result,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Students is retrived succesfully',
+    data: result,
+  });
+});
 
 export const StudentControllers = {
   getAllStudents,
