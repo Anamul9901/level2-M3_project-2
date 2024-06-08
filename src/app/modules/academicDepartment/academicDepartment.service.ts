@@ -2,7 +2,6 @@ import { TAcademicDepartment } from './academicDepartment.interface';
 import { AcademicDepartment } from './academicDepartment.model';
 
 const createAcademicDepartmentIntoDB = async (payload: TAcademicDepartment) => {
-
   //model e pre middleware hesebe use korbo
   // const isDepartmentExist = await AcademicDepartment.findOne({
   //   name: payload.name,
@@ -16,7 +15,8 @@ const createAcademicDepartmentIntoDB = async (payload: TAcademicDepartment) => {
 };
 
 const getAllAcademicDepartmentsFromDB = async () => {
-  const result = await AcademicDepartment.find();
+  // poulate('academicFaculty') use korar karone department get korar somy academicFaculty er data dekabe
+  const result = await AcademicDepartment.find().populate('academicFaculty');
   return result;
 };
 
