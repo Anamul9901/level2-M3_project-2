@@ -96,7 +96,7 @@ guardian.fatherOccupation = "Teacher"
     }
   }
 
-  console.log(modifiedUpdatedData);
+  // console.log(modifiedUpdatedData);
 
   const result = await Student.findOneAndUpdate({ id }, modifiedUpdatedData, {
     new: true,
