@@ -1,7 +1,5 @@
 import cors from 'cors';
 import express, { Application, Request, Response } from 'express';
-import { StudentRoutes } from './app/modules/student/student.route';
-import { UserRoutes } from './app/modules/user/user.route';
 import globalErrorHandler from './app/middlwares/globalErrorHandler';
 import notFound from './app/middlwares/notFound';
 import router from './app/routes';
@@ -16,7 +14,8 @@ app.use(cors());
 // router.use('/api/v1/students', StudentRoutes);
 app.use('/api/v1', router);
 
-const test = (req: Request, res: Response) => {
+const test = async (req: Request, res: Response) => {
+  // Promise.reject()   // server theke rejection error handle kora ase
   const a = 10;
   res.send(a);
 };

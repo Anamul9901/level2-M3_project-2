@@ -10,13 +10,13 @@ const router = express.Router(); // router ekta object return kore
 router.get('/', StudentControllers.getAllStudents);
 
 router.patch(
-  '/:studentId',
+  '/:id',
   validateRequest(studentValdattion.updateStudentValdattionSchema),
   StudentControllers.updatStudent,
 );
 
-router.delete('/:studentId', StudentControllers.deleteStudent);
+router.delete('/:id', StudentControllers.deleteStudent);
 
-router.get('/:studentId', StudentControllers.getSingleStudent);
+router.get('/:id', StudentControllers.getSingleStudent);
 
 export const StudentRoutes = router; // router nejee ekta object, tai object akare export korbo nah

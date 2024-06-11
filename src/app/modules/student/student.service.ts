@@ -5,8 +5,31 @@ import { User } from '../user/user.model';
 import httpStatus from 'http-status';
 import { TStudent } from './student.interface';
 
-const getAllStudentsFromDB = async () => {
-  const result = await Student.find()
+const getAllStudentsFromDB = async (query: Record<string, unknown>) => {
+  console.log('base query:', query);
+  const queryObject = { ...query }; // query k copy kore queryObject e bosalam
+  // {email: { $regex : query.searchTerm, $options: i}}
+  // {presentAddress: { $regex : query.searchTerm, $options: i}}
+  // {'name.firstName': { $regex : query.searchTerm, $options: i}}
+
+  const studentSearchableFirlds = ['email', 'name.firstName', 'presentAddress'];
+  let searchTerm = '';
+  if (query?.searchTerm) {
+    searchTerm = query?.searchTerm as string;
+  }
+
+  const searchQuery = Student.find({
+    $or: studentSearchableFirlds.map((field) => ({
+      [field]: { $regex: searchTerm, $options: 'i' },
+    })),
+  });
+
+  //Filtering
+  const exludeFields = ['searchTerm', 'sort', 'limit', 'page', 'fields'];
+  exludeFields.forEach((el) => delete queryObject[el]);
+  console.log('queryObject', queryObject);
+  const filterQuery = searchQuery
+    .find(queryObject)
     .populate('admissionSemester')
     .populate({
       path: 'academicDepartment',
@@ -14,11 +37,48 @@ const getAllStudentsFromDB = async () => {
         path: 'academicFaculty',
       },
     });
-  return result;
+
+  let sort = '-createdAt';
+  if (query.sort) {
+    sort = query.sort as string;
+  }
+
+  const sortQuery = filterQuery.sort(sort);
+
+  let limit = 1;
+  let page = 1;
+  let skip = 0;
+
+  if (query.limit) {
+    limit = Number(query.limit);
+  }
+
+  if (query.page) {
+    page = Number(query.page);
+    skip = (page - 1) * limit;
+  }
+
+  const paginationQuery = sortQuery.skip(skip);
+
+  const limitQuery = paginationQuery.limit(limit);
+
+  //fields limiting
+  let fields = '-__v';
+
+  // fields: 'name,enail';
+  // fields: 'name enail';
+  if (query.fields) {
+    fields = (query.fields as string).split(',').join(' ');
+    console.log({ fields });
+  }
+
+  const fieldQuery = await limitQuery.select(fields);
+
+  return fieldQuery;
 };
 
 const getSingleStudentFromDB = async (id: string) => {
-  const result = await Student.findOne({ id })
+  const result = await Student.findById(id)
     .populate('admissionSemester')
     .populate({
       path: 'academicDepartment',
@@ -33,8 +93,8 @@ const deletedStudent = async (id: string) => {
   const session = await mongoose.startSession();
   try {
     session.startTransaction();
-    const result = await Student.findOneAndUpdate(
-      { id },
+    const result: any = await Student.findByIdAndUpdate(
+      id,
       { isDeleted: true },
       { new: true, session },
     );
@@ -43,8 +103,11 @@ const deletedStudent = async (id: string) => {
       throw new AppError(httpStatus.BAD_REQUEST, 'Failed to delete Student');
     }
 
-    const deletedUsre = await User.findOneAndUpdate(
-      { id },
+    //get user _id from deletedStudent
+    const userId = result.user;
+
+    const deletedUsre = await User.findByIdAndUpdate(
+      userId,
       { isDeleted: true },
       { new: true, session },
     );
@@ -98,7 +161,7 @@ guardian.fatherOccupation = "Teacher"
 
   // console.log(modifiedUpdatedData);
 
-  const result = await Student.findOneAndUpdate({ id }, modifiedUpdatedData, {
+  const result = await Student.findByIdAndUpdate(id, modifiedUpdatedData, {
     new: true,
     runValidators: true,
   });
